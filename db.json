@@ -1,0 +1,28 @@
+{
+  "contacts": [
+    {
+      "id": 1,
+      "name": "Байден Джо",
+      "email": "joebidon@gmail.com",
+      "phone": "+3 (666) 572-00-20"
+    },
+    {
+      "id": 2,
+      "name": "Грильков Владислав Валерьевич",
+      "email": "grillkoffff@yandex.ru",
+      "phone": "+7 (965) 456-66-92"
+    },
+    {
+      "id": 3,
+      "name": "Кристина",
+      "email": "krispriz@yandex.ru",
+      "phone": "+7 (955) 918-32-33"
+    },
+    {
+      "id": 4,
+      "name": "Моск Илона",
+      "email": "ilonamosk@mail.ru",
+      "phone": "+7 (873) 452-44-32"
+    }
+  ]
+}
