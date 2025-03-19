@@ -1,33 +1,58 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useContactsStore } from '@/stores/root.js'
+import { useContactsStore } from '@/stores/root'
+import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
+import { validateEmail, validatePhone } from '@/utils/validator'
+
+interface Contact {
+  id: string
+  name: string
+  email: string
+  phone: string
+}
 
 const rootStore = useContactsStore()
 const { contacts } = storeToRefs(rootStore)
 
 const sortDirection = ref('asc')
-const editingContact = ref(null)
+const editingContact = ref<Contact | null>(null)
 const isEditing = ref(false)
+
+const emailError = ref<string>('')
+const phoneError = ref<string>('')
+
+const safeEditingContact = computed(() => 
+  editingContact.value ?? { id: '', name: '', email: '', phone: '' }
+)
 
 onMounted(async () => {
   await rootStore.getContacts()
 })
 
 const sortContacts = () => {
-  contacts.value.sort((a, b) =>
+  contacts.value.sort((a: { name: string }, b: { name: string }) =>
     sortDirection.value === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)
   )
   sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc'
 }
 
-const startEditing = (contact) => {
+const startEditing = (contact: Contact) => {
   editingContact.value = { ...contact }
   isEditing.value = true
+  emailError.value = ''
+  phoneError.value = ''
 }
 
 const saveEditing = async () => {
   if (editingContact.value) {
+    emailError.value = validateEmail(editingContact.value.email)
+    phoneError.value = validatePhone(editingContact.value.phone)
+
+    if (emailError.value || phoneError.value) { 
+      return
+    }
+
     try {
       await rootStore.updateContact(editingContact.value)
       await rootStore.getContacts()
@@ -42,6 +67,8 @@ const saveEditing = async () => {
 const cancelEditing = () => {
   isEditing.value = false
   editingContact.value = null
+  emailError.value = ''
+  phoneError.value = ''
 }
 </script>
 
@@ -67,7 +94,7 @@ const cancelEditing = () => {
         <tr v-for="contact in contacts" :key="contact.id" @click="startEditing(contact)">
           <td class="cell">
             <template v-if="isEditing && editingContact?.id === contact.id">
-              <input v-model="editingContact.name" />
+              <input v-model="safeEditingContact.name" />
             </template>
             <template v-else>
               {{ contact.name }}
@@ -75,7 +102,8 @@ const cancelEditing = () => {
           </td>
           <td class="cell">
             <template v-if="isEditing && editingContact?.id === contact.id">
-              <input v-model="editingContact.email" />
+              <input v-model="safeEditingContact.email" />
+              <p v-if="emailError" class="error">{{ emailError }}</p>
             </template>
             <template v-else>
               {{ contact.email }}
@@ -83,7 +111,8 @@ const cancelEditing = () => {
           </td>
           <td class="cell">
             <template v-if="isEditing && editingContact?.id === contact.id">
-              <input v-model="editingContact.phone" />
+              <input v-model="safeEditingContact.phone" />
+              <p v-if="phoneError" class="error">{{ phoneError }}</p>
             </template>
             <template v-else>
               {{ contact.phone }}
@@ -169,5 +198,10 @@ const cancelEditing = () => {
 
 .changes:not(:last-child) {
   margin-right: 10px;
+}
+
+.error {
+  color: red;
+  font-size: 10px;
 }
 </style>

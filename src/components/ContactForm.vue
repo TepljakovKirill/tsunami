@@ -4,6 +4,7 @@ import { useContactsStore } from '@/stores/root'
 import { useRouter } from 'vue-router'
 import EmailInput from '@/components/EmailInput.vue'
 import PhoneInput from '@/components/PhoneInput.vue'
+import { validateEmail, validatePhone } from '@/utils/validator'
 
 const name = ref<string>('')
 const email = ref<string>('')
@@ -22,18 +23,6 @@ const validateName = (): void => {
       : ''
 }
 
-const validateEmail = (): void => {
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  emailError.value = emailPattern.test(email.value) ? '' : 'Введите корректный email'
-}
-
-const validatePhone = (): void => {
-  const phonePattern = /^\+7 \(\d{3}\) \d{3}-\d{2}-\d{2}$/
-  phoneError.value = phonePattern.test(phone.value)
-    ? ''
-    : 'Введите корректный номер телефона в формате +7 (999) 999-99-99'
-}
-
 interface Contact {
   name: string
   email: string
@@ -44,8 +33,8 @@ const addContact = async (event: Event) => {
   event.preventDefault()
 
   validateName()
-  validateEmail()
-  validatePhone()
+  emailError.value = validateEmail(email.value)
+  phoneError.value = validatePhone(phone.value)
 
   if (!nameError.value && !emailError.value && !phoneError.value) {
     const newContact: Contact = {
@@ -93,7 +82,7 @@ const addContact = async (event: Event) => {
           name="email"
           v-model="email"
           placeholder="example@mail.com"
-          @input="validateEmail"
+          @input="() => (emailError = validateEmail(email))"
           required
         />
         <p v-if="emailError" class="error">{{ emailError }}</p>
@@ -108,7 +97,7 @@ const addContact = async (event: Event) => {
           v-model="phone"
           name="phone"
           :errorMessage="phoneError"
-          @input="validatePhone"
+          @input="() => (phoneError = validatePhone(phone))"
           required
         />
         <p v-if="phoneError" class="error">{{ phoneError }}</p>
