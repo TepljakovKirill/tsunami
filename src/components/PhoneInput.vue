@@ -1,16 +1,20 @@
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, defineProps, defineEmits, watch } from 'vue'
 import Inputmask from 'inputmask'
 
-const props = defineProps({
-  modelValue: String,
-})
-const emit = defineEmits(['update:modelValue'])
-const phoneInput = ref(null)
+const props = defineProps<{
+  modelValue: string
+}>()
 
-const handleInput = (event) => {
-  let value = event.target.value
+const emit = defineEmits<{
+  (event: 'update:modelValue', value: string): void
+}>()
+
+const phoneInput = ref<HTMLInputElement | null>(null)
+
+const handleInput = (event: Event) => {
+  let value = (event.target as HTMLInputElement).value
   if (value.startsWith('8')) {
     value = value.replace(/^8/, '+7')
   }
@@ -50,6 +54,7 @@ watch(
     />
   </div>
 </template>
+
 
 <style lang="scss" scoped>
 .form-group__input {

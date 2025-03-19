@@ -1,13 +1,16 @@
-<script setup>
+<script setup lang="ts">
 import { defineProps, defineEmits } from 'vue'
 
-const props = defineProps({
-  modelValue: String,
-})
-const emit = defineEmits(['update:modelValue'])
+const props = defineProps<{
+  modelValue: string
+}>()
 
-const handleInput = (event) => {
-  emit('update:modelValue', event.target.value)
+const emit = defineEmits<{
+  (event: 'update:modelValue', value: string): void
+}>()
+
+const handleInput = (event: Event): void => {
+  emit('update:modelValue', (event.target as HTMLInputElement).value)
 }
 </script>
 
@@ -23,6 +26,7 @@ const handleInput = (event) => {
     />
   </div>
 </template>
+
 
 <style lang="scss" scoped>
 .form-group__input {

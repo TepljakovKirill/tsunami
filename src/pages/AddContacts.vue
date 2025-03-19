@@ -1,41 +1,46 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import { useContactsStore } from '@/stores/root'
 import { useRouter } from 'vue-router'
-import PhoneInput from '@/components/PhoneInput.vue'
 import EmailInput from '@/components/EmailInput.vue'
+import PhoneInput from '@/components/PhoneInput.vue'
+
+const name = ref<string>('')
+const email = ref<string>('')
+const phone = ref<string>('')
+const nameError = ref<string>('')
+const emailError = ref<string>('')
+const phoneError = ref<string>('')
 
 const store = useContactsStore()
 const router = useRouter()
 
-const name = ref('')
-const email = ref('')
-const phone = ref('')
-const nameError = ref('')
-const emailError = ref('')
-const phoneError = ref('')
-
-const validateName = () => {
-  if (name.value.length < 3 || name.value.length > 26) {
-    nameError.value = 'Имя должно содержать от 3 до 26 символов'
-  } else {
-    nameError.value = ''
-  }
+const validateName = (): void => {
+  nameError.value =
+    name.value.length < 3 || name.value.length > 26
+      ? 'Имя должно содержать от 3 до 26 символов'
+      : ''
 }
 
-const validateEmail = () => {
+const validateEmail = (): void => {
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   emailError.value = emailPattern.test(email.value) ? '' : 'Введите корректный email'
 }
 
-const validatePhone = () => {
+const validatePhone = (): void => {
   const phonePattern = /^\+7 \(\d{3}\) \d{3}-\d{2}-\d{2}$/
   phoneError.value = phonePattern.test(phone.value)
     ? ''
     : 'Введите корректный номер телефона в формате +7 (999) 999-99-99'
 }
 
-const addContact = async (event) => {
+interface Contact {
+  name: string
+  email: string
+  phone: string
+}
+
+const addContact = async (event: Event) => {
   event.preventDefault()
 
   validateName()
@@ -43,7 +48,7 @@ const addContact = async (event) => {
   validatePhone()
 
   if (!nameError.value && !emailError.value && !phoneError.value) {
-    const newContact = {
+    const newContact: Contact = {
       name: name.value,
       email: email.value,
       phone: phone.value,
@@ -59,6 +64,7 @@ const addContact = async (event) => {
   }
 }
 </script>
+
 
 <template>
   <div class="container">

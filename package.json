@@ -20,9 +20,12 @@
   "devDependencies": {
     "@types/inputmask": "^5.0.7",
     "@vitejs/plugin-vue": "^5.2.1",
+    "@vue/compiler-sfc": "^3.5.13",
     "prettier": "3.5.3",
     "sass-embedded": "^1.85.1",
+    "typescript": "^5.8.2",
     "vite": "^6.2.1",
-    "vite-plugin-vue-devtools": "^7.7.2"
+    "vite-plugin-vue-devtools": "^7.7.2",
+    "vue-tsc": "^2.2.8"
   }
 }
