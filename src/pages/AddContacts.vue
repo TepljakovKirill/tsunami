@@ -2,6 +2,8 @@
 import { ref } from 'vue'
 import { useContactsStore } from '@/stores/root'
 import { useRouter } from 'vue-router'
+import PhoneInput from '@/components/PhoneInput.vue'
+import EmailInput from '@/components/EmailInput.vue'
 
 const store = useContactsStore()
 const router = useRouter()
@@ -80,7 +82,7 @@ const addContact = async (event) => {
 
         <div class="form-group">
           <label for="email" class="form-group__label">Email*</label>
-          <input
+          <EmailInput
             type="text"
             class="form-group__input"
             id="email"
@@ -95,13 +97,13 @@ const addContact = async (event) => {
 
         <div class="form-group">
           <label for="phone" class="form-group__label">Телефон*</label>
-          <input
+          <PhoneInput
             type="text"
             class="form-group__input"
             id="phone"
             v-model="phone"
             name="phone"
-            placeholder="+7 (999) 999-99-99"
+            :errorMessage="phoneError"
             @input="validatePhone"
             required
           />
